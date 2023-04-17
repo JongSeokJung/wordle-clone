@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:backend": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/JongSeokJung/wordle-clone/issues"
   },
-  "homepage": "https://github.com/JongSeokJung/wordle-clone#readme"
+  "homepage": "https://github.com/JongSeokJung/wordle-clone#readme",
+  "dependencies": {
+    "axios": "^1.3.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22"
+  }
 }

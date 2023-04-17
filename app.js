@@ -2,7 +2,20 @@ const tileDisplay = document.querySelector('.tile-container')
 const keyboard = document.querySelector('.key-container')
 const messageDisplay = document.querySelector('.message-container')
 
-const wordle = 'ASSET'
+let wordle
+
+const getWordle = () => {
+  fetch('http://localhost:8000/word')
+    .then(response => response.json())
+    .then(json => {
+      console.log(json)
+      wordle = json
+    })
+    .catch(err => console.log(err))
+}
+
+getWordle()
+
 const keys = [
   'Q',
   'W',
@@ -67,18 +80,24 @@ keys.forEach(key => {
   keyboard.append(btnElement);
 })
 
-const handleClick = (key) => {
-  console.log('click', key)
-  if (key === '«') {
-    console.log('delete letter')
-    deleteLetter()
-  } else if (key === 'ENTER') {
-    console.log('check row')
-    checkRow()
-  } else {
-    addLetter(key)
+document.addEventListener('keydown', (event) => {
+  const key = event.key;
+  const keyCode = event.keyCode;
+  if (key === 'Backspace' || key === 'Enter' || (keyCode >= 65 && keyCode <= 90)) {
+    handleClick(key.toUpperCase())
   }
-  console.log('guessRow: ', guessRows)
+})
+
+const handleClick = (key) => {
+  if (!isGameOver) {
+    if (key === '«' || key ==='BACKSPACE') {
+      deleteLetter()
+    } else if (key === 'ENTER') {
+      checkRow()
+    } else {
+      addLetter(key)
+    }
+  }
 }
 
 const addLetter = (letter) => {
@@ -103,20 +122,34 @@ const deleteLetter = () => {
 
 const checkRow = () => {
   const guess = guessRows[currentRow].join('')
-  flipTile()
+  const row = document.getElementById(`guessRow-${currentRow}`)
   if (currentTile === 5) {
-    if (wordle === guess) {
-      showMessage('Magnificent!')
-      isGameOver = true
-    } else {
-      if (currentRow >= 5) {
-        showMessage('Game Over')
-        isGameOver = true
-      } else {
-        currentRow++
-        currentTile = 0
-      }
-    }
+    fetch(`http://localhost:8000/check/?word=${guess}`)
+      .then(response => response.json())
+      .then(json => {
+        if (json.result_code === '200') {
+          flipTile()
+          if (wordle === guess) {
+            showMessage('Magnificent!')
+            isGameOver = true
+          } else {
+            if (currentRow >= 5) {
+              showMessage(`Game Over, Wordle was ${wordle}`)
+              isGameOver = true
+            } else {
+              currentRow++
+              currentTile = 0
+            }
+          }
+        } else {
+          showMessage('Word not in list')
+          row.classList.add('shake')
+          setTimeout(() => {
+            row.classList.remove('shake')
+          }, 2000)
+        }
+      })
+      .catch(err => console.log(err))
   }
 }
 
