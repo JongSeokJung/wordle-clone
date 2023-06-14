@@ -22,7 +22,11 @@ body {
 }
 
 .tile-container {
-  width: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
   margin-bottom: 30px;
 }
 
@@ -55,8 +59,8 @@ body {
 }
 
 .tile-container .tile {
-  width: 62px;
-  height: 62px;
+  width: 80px;
+  height: 80px;
   border: 2px solid #3a3a3c;
   box-sizing: border-box;
   display: flex;
